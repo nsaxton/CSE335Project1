@@ -15,6 +15,7 @@
 #include "CAquarium.h"
 #include "CFish.h"
 #include "CCountFishVisitor.h"
+#include "CScore.h"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ const int TrashCanWidth = 51;
 
 //! Height of the trash can
 const int TrashCanHeight = 70;
+
 
 /*! \brief Default constructor
  *
@@ -126,6 +128,7 @@ void CAquarium::OnDraw(wxDC& dc)
      }
     dc.DrawText(L"Under the Sea!", 2, 2);
     dc.DrawText(L"Team Ladyfish!", 350,2);
+    dc.DrawText(mAqScore.PrintScore(), 0 , 100);
     
     if(mTrashCanActive)
         dc.DrawBitmap(mTrashcan, 0, 0);

@@ -16,6 +16,7 @@
 #include <string>
 #include <list>
 #include <wx/xml/xml.h>
+#include "CScore.h"
 
 #include "CItem.h"
 #include "CItemVisitor.h"
@@ -107,6 +108,8 @@ private:
     int mWindowX;
     
     int mWindowY;
+    
+    CScore mAqScore;
     
     //! The image cache
     std::map<std::wstring, wxImage> mImageCache;
