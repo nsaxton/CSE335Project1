@@ -1,8 +1,11 @@
-/* 
- * File:   CScore.h
- * Author: student
+/*!
+ * \file CScore.h
  *
- * Created on October 13, 2013, 10:26 PM
+ * \author Matt Smania
+ *
+ * \brief Creates a score object.
+ * 
+ * 
  */
 
 #ifndef CSCORE_H
@@ -17,6 +20,8 @@ public:
     CScore();
     CScore(const CScore& orig);
     virtual ~CScore();
+    
+    //!makes changes to the score
     void Add(int change){ mScore += change;}
     std::wstring PrintScore();
     

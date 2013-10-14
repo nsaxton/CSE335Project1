@@ -88,13 +88,15 @@ private:
     wxBitmap mTrashcan;         //!< Trash can image to use
     wxBitmap mNormNav;         //!< normal navigation image to use
     wxBitmap mScrollNav;         //!< scrolling hand image to use
-    wxBitmap mBubbles;          //!<bubble image to use 
+    wxBitmap mBubbles;          //!< bubble image to use 
     //! State of the trashcan
     bool mTrashCanActive;
     double mElapsed;
-    double mBubbleY;
-    bool mBubbleActive;
-    double mBubbleX;
+    
+    double mBubbleY;    //!< The bubbles y position, so that it floats to the top
+    bool mBubbleActive; //!< bool to activate bubble to rise
+    double mBubbleX;    //!< the bubbles x position
+    
     wxBitmap    mBackgroundDirty1;      //!< 1st (partly) dirty background
     wxBitmap    mBackgroundDirty2;      //!< 2nd (more) dirty background
     wxBitmap    mBackgroundDirty3;      //!< 3rd (most) dirty background
@@ -104,12 +106,13 @@ private:
    
     //! bool for navigation setting
     bool mNavActive;
-    int mFrameHeight;
-    int mWindowX;
     
-    int mWindowY;
+    int mFrameHeight;           //!< Current Height of the frame
     
-    CScore mAqScore;
+    int mWindowX;       //!< Window X offset
+    int mWindowY;       //!< Window Y offset
+    
+    CScore mAqScore;    //!< Score for the game
     
     //! The image cache
     std::map<std::wstring, wxImage> mImageCache;

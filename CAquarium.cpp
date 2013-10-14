@@ -486,3 +486,4 @@ void CAquarium::Accept(CItemVisitor *visitor)
         item->Accept(visitor);
     }
 }
+
