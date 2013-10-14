@@ -52,6 +52,10 @@ public:
     //! \returns true if item is beta fish
     virtual bool IsBetaFish() {return false;}
     
+    //! Test to see if item is fish
+    //! \returns true if item is fish
+    virtual bool IsFish() {return false;}
+    
     virtual wxXmlNode *XmlSave();
     virtual void XmlLoad(wxXmlNode *node);
     

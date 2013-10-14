@@ -62,11 +62,11 @@ public:
     
     /*! \brief Feeding the fish, resetting hunger timer
      */
-    void FeedFish();
+    bool FeedFish();
     
     /*! \brief Feeding the fish, resetting hunger timer
      */
-    void CleanTank();
+    bool CleanTank();
     
     void Accept(CItemVisitor *visitor);
     
@@ -82,6 +82,13 @@ public:
     void SetBubbleActive(bool i) { mBubbleActive = i;}
     void SetBubbleX(double i) { mBubbleX = i;}
     void SetBubbleY(double i) { mBubbleY = i;}
+    
+    /*! \brief Gets the base dirty time
+     * \returns the base dirty time value
+     */
+    int GetDirtyTime() {return mDirtyTime;}
+    
+    int CountFish();
     
 private:
     wxBitmap mBackground;       //!< Background image to use
@@ -101,8 +108,10 @@ private:
     wxBitmap    mBackgroundDirty2;      //!< 2nd (more) dirty background
     wxBitmap    mBackgroundDirty3;      //!< 3rd (most) dirty background
     
-    double mFeedTimer;                   //!< Time since last fed
-    double mCleanTimer;                  //!< Time since last cleaned
+    double mFeedTimer;         //!< Time since last fed
+    double mCleanTimer;        //!< Time since last cleaned
+    double mHungerTime;        //!< Time by which fish need food
+    double mDirtyTime;         //!< Time by which aquarium starts getting dirty
    
     //! bool for navigation setting
     bool mNavActive;

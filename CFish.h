@@ -35,6 +35,8 @@ public:
     void SetSpeed(double x, double y);
     
     virtual void Accept(CItemVisitor *) = 0;
+    
+    virtual bool IsFish() {return true;}
         
 protected:
     CFish(CAquarium *aquarium, const std::wstring &filename);

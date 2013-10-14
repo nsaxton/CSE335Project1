@@ -65,6 +65,8 @@ CAquarium::CAquarium()
     mBubbleActive = false;
     mWindowX = 0;
     mWindowY = 0;
+    mHungerTime = 45;
+    mDirtyTime = 20;
 }
 
 /*! \brief Copy constructor 
@@ -88,9 +90,9 @@ void CAquarium::OnDraw(wxDC& dc)
 {
     // Create a font
     wxFont font(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
-                wxFONTWEIGHT_NORMAL, false);
+                wxFONTWEIGHT_BOLD, false);
     dc.SetFont(font);
-    dc.SetTextForeground(wxColour(255, 255, 255));
+    dc.SetTextForeground(wxColour(255, 99, 71));
     if(mWindowX < -1535)
     {
         mWindowX = -1535;
@@ -110,15 +112,15 @@ void CAquarium::OnDraw(wxDC& dc)
     }
     
     // Determine which background to load
-    if(mCleanTimer < 15)
+    if(mCleanTimer < mDirtyTime)
      {
         dc.DrawBitmap(mBackground, mWindowX, mWindowY, true);
      }
-     else if(mCleanTimer < 30)
+    else if(mCleanTimer < (mDirtyTime + 20))
      {
         dc.DrawBitmap(mBackgroundDirty1, mWindowX, mWindowY, true);
      }
-     else if (mCleanTimer < 45)
+    else if (mCleanTimer < (mDirtyTime + 40))
      {
         dc.DrawBitmap(mBackgroundDirty2,  mWindowX, mWindowY, true);
      }
@@ -127,46 +129,74 @@ void CAquarium::OnDraw(wxDC& dc)
         dc.DrawBitmap(mBackgroundDirty3, mWindowX, mWindowY, true);
      }
     dc.DrawText(L"Under the Sea!", 2, 2);
-    dc.DrawText(L"Team Ladyfish!", 350,2);
-    dc.DrawText(mAqScore.PrintScore(), 0 , 100);
+    dc.DrawText(L"presented by Team Ladyfish", 2, 20);
+    dc.DrawText(mAqScore.PrintScore(), 2, 50);
     
     if(mTrashCanActive)
         dc.DrawBitmap(mTrashcan, 0, 0);
     
+    if(mCleanTimer > (mDirtyTime + 60))
+    {
+        // Make sure to delete only fish
+        list<CItem *>::iterator k = mItems.begin();
+        while(k != mItems.end())
+        {
+            CItem *item = *k;
+            if(item->IsFish())
+            {
+                k = mItems.erase(k);
+                mAqScore.Add(-1000);
+            }
+            else
+                ++k;
+        }
+ 
+        mFeedTimer = 0; // Reset feed timer since all fish are dead now
+        mHungerTime = 45; // Reset hunger timer
+        mDirtyTime = 20; // Reset dirty timer
+    }
     
     if(mNavActive)
         dc.DrawBitmap(mScrollNav,0,mFrameHeight-104);
     else
         dc.DrawBitmap(mNormNav,0,mFrameHeight-104);
     
-    if(mFeedTimer > 30)       // Fish are dead, clear them out
-     {
-        while(!mItems.empty())
+    if(mFeedTimer > mHungerTime)       // Fish are dead, clear them out
+    {
+        // Make sure to delete only fish
+        list<CItem *>::iterator j = mItems.begin();
+        while(j != mItems.end())
         {
-            delete mItems.front();
-            mItems.pop_front();
+            CItem *item = *j;
+            if(item->IsFish())
+            {
+                j = mItems.erase(j);
+                mAqScore.Add(-1000);
+            }
+            else
+                ++j;
         }
-        mFeedTimer = 0;
-     }
-     else        // All the fish (and all other items) are good, draw all
-     {
-         for(list<CItem *>::iterator t=mItems.begin(); t!=mItems.end(); t++)
-         {
-             CItem *item = *t;
-             item->SetXOffset(mWindowX);
-             item->SetYOffset(mWindowY);
-             item->Draw(dc);
-         }
-     }
-     if(mBubbleActive)
-     {   
-         dc.DrawBitmap(mBubbles, mBubbleX + mWindowX, mBubbleY + mWindowY);
-         mBubbleY -= mElapsed * 50;  
-         if(mBubbleY < 2)
-         {
-             mBubbleActive = !mBubbleActive;
-         } 
-     }
+ 
+        mFeedTimer = 0; // Reset feed timer since all fish are dead now
+        mHungerTime = 45; // Reset hunger timer
+        mDirtyTime = 20; // Reset dirty timer
+    }
+    else // All the fish (and all other items) are good, draw all
+    {
+        for (list<CItem *>::iterator t = mItems.begin(); t != mItems.end(); t++) {
+            CItem *item = *t;
+            item->SetXOffset(mWindowX);
+            item->SetYOffset(mWindowY);
+            item->Draw(dc);
+        }
+    }
+    if (mBubbleActive) {
+        dc.DrawBitmap(mBubbles, mBubbleX + mWindowX, mBubbleY + mWindowY);
+        mBubbleY -= mElapsed * 50;
+        if (mBubbleY < 2) {
+            mBubbleActive = !mBubbleActive;
+        }
+    }
      
 }
 
@@ -219,6 +249,14 @@ void CAquarium::AddItem(CItem *item)
 {
     item->SetLocation(mBackground.GetWidth()/2, mBackground.GetHeight()/2);
     mItems.push_back(item);
+    // If the item being added is a fish, then they need to be fed more often
+    if(item->IsFish())
+    {
+        if(mHungerTime > 10)
+            mHungerTime--;
+        if(mDirtyTime > 10)
+            mDirtyTime--;
+    }
 }
 
 /*! \brief Test an x,y click location to see if it clicked
@@ -295,6 +333,16 @@ bool CAquarium::IsOverTrashcan(int x, int y)
  */
 void CAquarium::DeleteItem(CItem *item)
 {
+    // If the item being deleted is a fish then the aquarium gets hungry slower
+    if(item->IsFish())
+    {
+        // Decrease the speed at which fish get hungry and aquarium gets dirty
+        // because one less fish is now present
+        if(mHungerTime < 45)
+            mHungerTime++;
+        if(mDirtyTime < 20)
+            mDirtyTime++;
+    }
     mItems.remove(item);
     delete item;
 }
@@ -313,6 +361,23 @@ int CAquarium::CountBetas()
     
     // Get the number of beta fish
     return visitor.GetNumBeta();
+}
+
+/*! \brief Counts the total number of fish in the aquarium
+ *
+ * \returns the total number of fish currently in the aquarium
+ */
+int CAquarium::CountFish()
+{
+    // Create the visitor object
+    CCountFishVisitor visitor;
+    
+    // Call accept for the aquarium
+    Accept(&visitor);
+    
+    // Get the total number of fish
+    return visitor.GetNumBeta() + visitor.GetNumCatfish() + 
+        visitor.GetNumSparty();
 }
 
 /*! \brief Save the aquarium as a .aqua XML file.
@@ -456,22 +521,46 @@ void CAquarium::Update(double elapsed)
 
 /*! \brief Action for feeding fish
  * 
- * \param
- * \returns
+ * \returns true if fish successfully fed
  */
-void CAquarium::FeedFish()
+bool CAquarium::FeedFish()
 {
-    mFeedTimer = 0;
+    // Prevent mass feeding
+    if(mFeedTimer > (mHungerTime/4))
+    {
+        // Reset the feed timer and add 100 x the number of fish in the aquarium
+        // to the score
+        mFeedTimer = 0;
+        int totalFish = CountFish();
+        mAqScore.Add(totalFish * 100);
+        return true;
+    }
+    return false;
 }
 
 /*! \brief Action for cleaning tank
- * 
- * \param
- * \returns
+ *
+ * \returns true if successfully cleaned
  */
-void CAquarium::CleanTank()
+bool CAquarium::CleanTank()
 {
-    mCleanTimer = 0;
+    // Prevent mass cleaning
+    if(mCleanTimer > (mDirtyTime/4))
+    {
+        // Calculate what score to add based on how soon aquarium was cleaned
+        if (mCleanTimer < mDirtyTime) {
+            mAqScore.Add(500);
+        }
+        else if (mCleanTimer < (mDirtyTime + 20)) {
+            mAqScore.Add(300);
+        }
+        else if (mCleanTimer < (mDirtyTime + 40)) {
+            mAqScore.Add(100);
+        }
+        mCleanTimer = 0; // Reset clean timer
+        return true;
+    }
+    return false;
 }
 
 /*! \brief Accept an item visitor

@@ -42,7 +42,7 @@ CScore::~CScore()
 std::wstring CScore::PrintScore()
 {
     std::wstringstream tempStr;
-    tempStr << L"Score: " << mScore;
+    tempStr << L"CURRENT SCORE: " << mScore;
     std::wstring str = tempStr.str();
     return str;
 }

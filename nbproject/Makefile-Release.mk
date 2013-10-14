@@ -48,7 +48,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/CFrame.o \
 	${OBJECTDIR}/CItem.o \
 	${OBJECTDIR}/CItemVisitor.o \
-	${OBJECTDIR}/CReporter.o
+	${OBJECTDIR}/CReporter.o \
+	${OBJECTDIR}/CScore.o
 
 
 # C Compiler Flags
@@ -144,6 +145,11 @@ ${OBJECTDIR}/CReporter.o: CReporter.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/CReporter.o CReporter.cpp
+
+${OBJECTDIR}/CScore.o: CScore.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/CScore.o CScore.cpp
 
 # Subprojects
 .build-subprojects:

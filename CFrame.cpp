@@ -407,7 +407,13 @@ void CFrame::OnTimer(wxTimerEvent &event)
  */
 void CFrame::OnFeed(wxCommandEvent& event)
 {
-    mAquarium.FeedFish();
+    mReporter->Report(L"----------------------");
+    bool success = mAquarium.FeedFish();
+    if(success)
+        mReporter->Report(L"Successfully fed the fish.");
+    else
+        mReporter->Report(L"Sorry. Fish have been fed too recently.");
+    mReporter->Report(L"----------------------");
 }
 
 /*! \brief Cleans the tank, to avoid the dirty background images
@@ -417,7 +423,13 @@ void CFrame::OnFeed(wxCommandEvent& event)
  */
 void CFrame::OnClean(wxCommandEvent& event)
 {
-    mAquarium.CleanTank();
+    mReporter->Report(L"----------------------");
+    bool success = mAquarium.CleanTank();
+    if(success)
+        mReporter->Report(L"Successfully cleaned the tank.");
+    else
+        mReporter->Report(L"Sorry. The tank has been cleaned too recently.");
+    mReporter->Report(L"----------------------");
 }
 
 /*! \brief Generates a report on the state of the aquarium every 30 seconds
@@ -456,11 +468,11 @@ void CFrame::OnReport(wxTimerEvent &event)
     
     wstring dirtyStr = L"The tank is: ";
     
-    if(dirtyTime < 15)
+    if(dirtyTime < mAquarium.GetDirtyTime())
         dirtyStr += L"Clean";
-    else if(dirtyTime < 30)
+    else if(dirtyTime < (mAquarium.GetDirtyTime() + 20))
         dirtyStr += L"Dirty";
-    else if(dirtyTime < 60)
+    else if(dirtyTime < (mAquarium.GetDirtyTime() + 40))
         dirtyStr += L"Dirtier";
     else
         dirtyStr += L"Filthy";
