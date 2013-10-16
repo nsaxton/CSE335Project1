@@ -152,9 +152,10 @@ void CFrame::OnExit(wxCommandEvent& event)
 void CFrame::OnAbout(wxCommandEvent& event)
 {
     wxMessageBox(L"Properly maintain the aquarium. Feed the fish, clean the "
-            "tank. If fish are not fed, the will die. the more fish the more"
+            "tank. If fish are not fed, the will die. the more fish the more "
             "frequently they need to be fed and cleaned, and the higher the "
-            "score. Good luck!",
+            "score. But, if your score drops below 0 then Game Over and the "
+            "window will close! Good luck!",
                  L"Rules of the Game",
                  wxOK | wxICON_INFORMATION, this);
 }
@@ -168,6 +169,10 @@ void CFrame::OnAbout(wxCommandEvent& event)
  */
 void CFrame::OnPaint(wxPaintEvent &event)
 {
+    if(!mAquarium.GetGameOn())
+    {
+        Close(TRUE);
+    }
     // Handles updates
     long long newTime = wxGetLocalTimeMillis().GetValue();
     double elapsed = (newTime - mCurrentTime) * 0.001;

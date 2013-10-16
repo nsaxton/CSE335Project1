@@ -24,7 +24,7 @@ public:
     //!makes changes to the score
     void Add(int change){ mScore += change;}
     std::wstring PrintScore();
-    
+        
     /*! \brief Gets the current score
      * \returns the current score of the game
      */

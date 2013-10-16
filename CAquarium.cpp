@@ -63,6 +63,7 @@ CAquarium::CAquarium()
     mNavActive = false;
     mTrashCanActive = false;
     mBubbleActive = false;
+    mGameOn = true;
     mWindowX = 0;
     mWindowY = 0;
     mHungerTime = 45;
@@ -197,7 +198,10 @@ void CAquarium::OnDraw(wxDC& dc)
             mBubbleActive = !mBubbleActive;
         }
     }
-     
+    if( mAqScore.GetScore() <= 0)
+    {
+        mGameOn = false;
+    }
 }
 
 /*! \brief Get an image from the image cache

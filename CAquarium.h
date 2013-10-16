@@ -90,6 +90,8 @@ public:
     
     int CountFish();
     
+    bool GetGameOn(){ return mGameOn;}
+    
 private:
     wxBitmap mBackground;       //!< Background image to use
     wxBitmap mTrashcan;         //!< Trash can image to use
@@ -122,6 +124,8 @@ private:
     int mWindowY;       //!< Window Y offset
     
     CScore mAqScore;    //!< Score for the game
+    
+    bool mGameOn;       //!< bool to stop game if  score is less than 0
     
     //! The image cache
     std::map<std::wstring, wxImage> mImageCache;
