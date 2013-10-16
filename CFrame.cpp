@@ -169,6 +169,7 @@ void CFrame::OnAbout(wxCommandEvent& event)
  */
 void CFrame::OnPaint(wxPaintEvent &event)
 {
+    // Closes game if the score is less than or equal to zero
     if(!mAquarium.GetGameOn())
     {
         Close(TRUE);
